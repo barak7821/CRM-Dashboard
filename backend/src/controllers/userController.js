@@ -21,6 +21,8 @@ export const updateUser = async (req, res) => {
     try {
         const userId = req.user.id
         const updateFields = {}
+        const user = await User.findById(userId)
+        if (!user) return res.status(404).json({ message: "User not found" })
 
         // If userName is provided, check if it's available and unique
         if (userName) {
@@ -41,18 +43,15 @@ export const updateUser = async (req, res) => {
 
         // If password is provided, validate it and hash it before updating
         if (password) {
-            const user = await User.findById(userId).select("password")
-            if (!user) return res.status(404).json({ message: "User not found" })
-
             // Validate password length
             if (password.length < 8 || password.length > 20) {
                 return res.status(400).json({ message: "Password must be between 8 and 20 characters long" })
             }
-            
+
             if (user.provider === "google" && !user.password) {
                 const hashedPassword = await hashPassword(password)
                 updateFields.password = hashedPassword
-            } else {
+            } else if (user.password) {
                 // Check if the new password is different from the current password
                 const isPasswordCorrect = await checkPassword(password, user.password)
 
@@ -63,6 +62,8 @@ export const updateUser = async (req, res) => {
                 } else {
                     return res.status(400).json({ message: "New password cannot be the same as the current password" })
                 }
+            } else {
+                return res.status(400).json({ message: "Cannot update password for this user" })
             }
         }
 
