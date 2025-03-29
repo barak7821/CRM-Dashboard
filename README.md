@@ -30,11 +30,13 @@ A system designed for user management with an admin dashboard.
 - **Notyf** for styled notifications.
 - **React-Router-Dom** for routing and navigation.
 - **React-Icons** for icons.
+- **react-oauth/google** for integrating Google login (OAuth2).
 
 ### Backend:
 - **Mongoose (MongoDB)** for database management.
 - **Express** for handling server-side logic.
 - **Nodemon** for automatic server restarts during development.
+- **Nodemailer** for sending password reset emails.
 
 ### Security & Connection Management:
 - **JWT (JSON Web Tokens)** for user authentication.
@@ -129,6 +131,9 @@ This will install dependencies for both the frontend and backend using npm-run-a
    PORT=your_port
    MongoDB_URL=your_mongodb_connection_url
    JWT_SECRET=your_jwt_secret_key
+   APP_NAME=Your_App_Name
+   EMAIL_USER=your_email@example.com
+   EMAIL_PASS=your_email_app_password
    ```
    Frontend .env
    ```bash
