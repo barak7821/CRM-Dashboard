@@ -9,25 +9,21 @@ import { LuEye, LuEyeClosed } from "react-icons/lu";
 
 export default function MainPage() {
   const nav = useNavigate()
-  const notyf = new Notyf({
-    position: {
-      x: 'center',
-      y: 'top'
-    }
-  })
+  const notyf = new Notyf({ position: { x: 'center', y: 'top' } })
   const [userData, setUserData] = useState(null)
   const [updateUserName, setUpdateUserName] = useState("")
   const [updateName, setUpdateName] = useState("")
   const [updateEmail, setUpdateEmail] = useState("")
   const [updateRole, setUpdateRole] = useState("")
   const [updatePassword, setUpdatePassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [allUsers, setAllUsers] = useState([])
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false)
 
   const getUser = async () => {
     try {
       const token = localStorage.getItem("token")
-      if (!token) return nav("/login")
 
       const { data } = await axios.get(`http://localhost:${import.meta.env.VITE_PORT}/api/user`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -45,35 +41,15 @@ export default function MainPage() {
       }
     } catch (error) {
       console.error("Failed to fetch user data", error)
-      if (error.response.status === 401 || error.response.status === 403) return nav("/login")
-    }
-  }
-
-  // Checking if a valid user session exists, otherwise logging out
-  const checkUserExists = async () => {
-    const token = localStorage.getItem("token")
-    if (!token) return
-
-    try {
-      const response = await axios.get(`http://localhost:${import.meta.env.VITE_PORT}/api/auth/checkuser`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      if (response.data.exists) {
-        nav("/")
-      } else {
-        localStorage.removeItem("token")
-      }
-    } catch (error) {
-      localStorage.removeItem("token")
+      if (error.response.status === 401 || error.response.status === 403) return nav("/")
     }
   }
 
   useEffect(() => {
     getUser()
-    checkUserExists()
   }, [])
 
-    // If user data is not loaded yet, show loading message
+  // If user data is not loaded yet, show loading message
   if (!userData) return <p className="flex justify-center items-center">Loading...</p>
 
   const { userName, name, email, createdAt, role } = userData
@@ -83,12 +59,6 @@ export default function MainPage() {
     e.preventDefault()
     try {
       const token = localStorage.getItem("token")
-      if (!token) return
-
-      // Checking if username length is less than 6 characters
-      if (updateUserName.length > 0) {
-        if (updateUserName.length < 6) return notyf.error("Your username must be at least 6 characters long.")
-      }
 
       // Checking if name length is less than 2 characters
       if (updateName.length > 0) {
@@ -99,6 +69,10 @@ export default function MainPage() {
       if (updatePassword.length > 0) {
         if (updatePassword.length < 8 || updatePassword.length > 20) return notyf.error("Your password must be between 8 and 20 characters long.")
       }
+
+      // Check if passwords match
+      if (confirmPassword !== updatePassword) return notyf.error("The passwords do not match. Please try again.")
+
 
       // Check if email is valid
       if (updateEmail.length > 0) {
@@ -120,7 +94,6 @@ export default function MainPage() {
       console.error("Failed to update user data", error)
       if (error.response.status === 404) return notyf.error("User not found. Please try again.")
       if (error.response.status === 400) return notyf.error("New password cannot be the same as the current password.")
-      if (error.response.status === 409) return notyf.error("Username already taken.")
       notyf.error("Something went wrong. Please try again later.")
     }
   }
@@ -136,7 +109,7 @@ export default function MainPage() {
       console.log(response.data)
       notyf.success("Your account has been deleted successfully.")
       localStorage.removeItem("token")
-      nav("/login")
+      nav("/")
     } catch (error) {
       console.error("Failed to delete user data", error)
       if (error.response.status === 404) return notyf.error("User not found. Please try again.")
@@ -172,6 +145,16 @@ export default function MainPage() {
                   <input onChange={(e) => { setUpdatePassword(e.target.value) }} type={isPasswordVisible ? "text" : "password"} className='p-2 rounded-xl bg-white w-3/4' placeholder={"Enter new password"} />
                   <button onClick={() => { !isPasswordVisible ? setIsPasswordVisible(true) : setIsPasswordVisible(false) }} className='absolute right-3' type="button">
                     {isPasswordVisible ? <LuEyeClosed className='text-gray-400 cursor-pointer active:text-black active:scale-115 duration-300' /> :
+                      <LuEye className='text-gray-400 cursor-pointer active:text-black active:scale-115 duration-300' />}
+                  </button>
+                </span>
+
+                {/* confirm password */}
+                <span className='flex items-center gap-4 p-1 relative'>
+                  <h1 className='font-semibold text-xl w-1/4'>Confirm Password:</h1>
+                  <input onChange={(e) => { setConfirmPassword(e.target.value) }} type={isConfirmPasswordVisible ? "text" : "password"} className='p-2 rounded-xl bg-white w-3/4' placeholder={"Confirm password"} />
+                  <button onClick={() => { !isConfirmPasswordVisible ? setIsConfirmPasswordVisible(true) : setIsConfirmPasswordVisible(false) }} className='absolute right-3' type="button">
+                    {isConfirmPasswordVisible ? <LuEyeClosed className='text-gray-400 cursor-pointer active:text-black active:scale-115 duration-300' /> :
                       <LuEye className='text-gray-400 cursor-pointer active:text-black active:scale-115 duration-300' />}
                   </button>
                 </span>

@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema(
         // userName: unique and required
         userName: {
             type: String,
-            required: true,
             unique: true
         },
         // name: required
@@ -23,13 +22,22 @@ const userSchema = new mongoose.Schema(
         // password field: required and has a minimum length
         password: {
             type: String,
-            required: true,
             minlength: 8
         },
         // role field: optional, used to assign roles like "admin" or "user"
         role: {
             type: String
         },
+        // Account provider (defaults to "local", can be "google", etc.)
+        provider: {
+            type: String, default: "local"
+        },
+        otpCode: {
+            type: String
+        },
+        otpExpiresAt: {
+            type: Date
+        }
     },
     { timestamps: true }  // Automatically adds 'createdAt' and 'updatedAt' fields
 )

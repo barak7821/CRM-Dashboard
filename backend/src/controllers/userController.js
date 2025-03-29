@@ -48,14 +48,21 @@ export const updateUser = async (req, res) => {
             if (password.length < 8 || password.length > 20) {
                 return res.status(400).json({ message: "Password must be between 8 and 20 characters long" })
             }
-
-            // Check if the new password is different from the current password
-            const isPasswordCorrect = await checkPassword(password, user.password)
-            if (!isPasswordCorrect) {
+            
+            if (user.provider === "google" && !user.password) {
                 const hashedPassword = await hashPassword(password)
                 updateFields.password = hashedPassword
             } else {
-                return res.status(400).json({ message: "New password cannot be the same as the current password" })
+                // Check if the new password is different from the current password
+                const isPasswordCorrect = await checkPassword(password, user.password)
+
+                // if isPasswordCorrect is false, password are not same so hashed it
+                if (!isPasswordCorrect) {
+                    const hashedPassword = await hashPassword(password)
+                    updateFields.password = hashedPassword
+                } else {
+                    return res.status(400).json({ message: "New password cannot be the same as the current password" })
+                }
             }
         }
 

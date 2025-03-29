@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { IoIosMenu, IoIosClose } from "react-icons/io";
+import { useAuth } from '../utils/AuthContext'
 
 export default function MainPage() {
   const nav = useNavigate()
+  const { setIsAuthenticated } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    setIsAuthenticated(false)
   }
   return (
     <>
@@ -15,7 +22,7 @@ export default function MainPage() {
         <ul className='flex flex-col items-center py-5 space-y-6'>
           {/* large screens */}
           <li className='cursor-pointer font-semibold hover:scale-105 active:scale-95 duration-300'>
-            <Link to="/">Home</Link>
+            <Link to="/main">Home</Link>
           </li>
 
           {!localStorage.getItem("token") &&
@@ -23,9 +30,9 @@ export default function MainPage() {
               <Link to="/login">Login</Link>
             </li>
           }
-          
+
           <li className='cursor-pointer font-semibold hover:scale-95 active:scale-90 duration-300'>
-            <button onClick={() => { localStorage.removeItem("token"); nav("/login") }}>Log Out</button>
+            <button onClick={handleLogout}>Log Out</button>
           </li>
         </ul>
       </nav>
@@ -47,11 +54,11 @@ export default function MainPage() {
           </li>
 
           {!localStorage.getItem("token") &&
-          <li className='mb-10 hover:scale-105 cursor-pointer active:scale-95 duration-150'>
-            <Link to="/login">Login</Link>
-          </li>
+            <li className='mb-10 hover:scale-105 cursor-pointer active:scale-95 duration-150'>
+              <Link to="/login">Login</Link>
+            </li>
           }
-          
+
           <li className='mb-10 hover:scale-105 cursor-pointer active:scale-95 duration-150'>
             <button onClick={() => { localStorage.removeItem("token"); nav("/login"); setIsOpen(!isOpen) }}>Log Out</button>
           </li>

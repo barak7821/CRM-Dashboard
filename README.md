@@ -7,6 +7,8 @@ A system designed for user management with an admin dashboard.
 1. **Sign-up and Login:**
    - Every user can sign up and log into the system.
    - Users have access to a personal page where they can edit their details.
+   - Users who forgot their password can request a reset link via email and update their password securely.
+   - Users have access to a personal page where they can edit their details.
 
 2. **Admin Access:**
    - If the user is an admin (registered as such in the system), they will be redirected to a different page after logging in.
@@ -103,7 +105,7 @@ Root Directory
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/barak7821/AdminUserManager.git
+   git clone https://github.com/yourusername/AdminUserManager.git
    ```
 
 2. Navigate to the project folder:
@@ -111,48 +113,34 @@ Root Directory
    cd <project folder name>
    ```
 
-3. Install dependencies:
-   - For backend:
+3. Install dependencies from the root project folder (the one containing both frontend/ and backend/):
      ```bash
-     cd backend
      npm install
      ```
-
-   - For frontend:
-     ```bash
-     cd frontend
-     npm install
-     ```
+This will install dependencies for both the frontend and backend using npm-run-all, without needing to run npm install separately in each subfolder.
      
 4. Set up your environment variables:
-   - Before running the project, you need to create a .env file in the root directory of the project. This file should include the following environment variables:
-     
-     **MongoDB_URL:** The connection string to your MongoDB database.
-     
-     **JWT_SECRET:** A secret key used for JWT token generation and verification.
-     
-     **PORT:** The port on which the backend server will run.
+   - Each part of the project (both frontend/ and backend/) requires its own separate .env file.
+   - Copy the provided .env.example in each of them to a new file named .env.
+   - Fill in your own values:
 
-   - Example .env file:
+   Backend .env
    ```bash
+   PORT=your_port
    MongoDB_URL=your_mongodb_connection_url
    JWT_SECRET=your_jwt_secret_key
-   PORT=your_port_number
    ```
+   Frontend .env
+   ```bash
+   VITE_PORT=your_backend_port
+   VITE_GOOGLE_CLIENT_ID=your_google_client_id
+   ``` 
    
    Make sure to replace the values with your own configuration.
 
-   **Notes:** You can use the .env.example file provided in the project as a template for your .env file.
-
-5. Run the server:
-   - For the backend server:
+5. Run the project from the root directory:
      ```bash
-     cd backend
      npm run dev
      ```
-
-   - For React frontend:
-     ```bash
-     cd frontend
-     npm run dev
-     ```
+     
+This will start both the backend and frontend servers concurrently using npm-run-all and concurrently. Make sure to run this command from the main project folder, not from the frontend or backend subfolders. The frontend output will be shown in blue, and the backend in green.
