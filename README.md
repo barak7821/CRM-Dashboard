@@ -1,151 +1,241 @@
-# User Management System for Admin
+# CRM Dashboard
 
-A system designed for user management with an admin dashboard.
+A modern and responsive CRM (Customer Relationship Management) web application built with React and Node.js. The system allows both regular users and administrators to manage clients, track activity, and analyze key business metrics.
 
-## Features
+> ✅ Includes demo admin and regular user accounts – no signup required!
 
-1. **Sign-up and Login:**
-   - Every user can sign up and log into the system.
-   - Users have access to a personal page where they can edit their details.
-   - Users who forgot their password can request a reset link via email and update their password securely.
-   - Users have access to a personal page where they can edit their details.
+🚀 **Live Demo:**  
+👉 [https://crm-dashboard-nu.vercel.app](https://crm-dashboard-nu.vercel.app)
 
-2. **Admin Access:**
-   - If the user is an admin (registered as such in the system), they will be redirected to a different page after logging in.
-   - On this page, the admin can view all users in the system and perform actions such as editing, deleting, or updating user details, including managing user permissions.
-   - A default admin user is automatically created when the project is first run. This ensures there will always be an admin in the system.
-   - Even if the admin user is deleted, it will be recreated automatically the next time the server is restarted.
-   - The default admin's login credentials are as follows:
-   
-      **Email:** admin@admin
-   
-      **Password:** 123456789
-     
-## Technologies Used
+---
 
-### Frontend:
-- **React** for building the user interface.
-- **TailwindCSS** for styling the application.
-- **Axios** for API calls.
-- **Notyf** for styled notifications.
-- **React-Router-Dom** for routing and navigation.
-- **React-Icons** for icons.
-- **react-oauth/google** for integrating Google login (OAuth2).
+## ✨ Features
 
-### Backend:
-- **Mongoose (MongoDB)** for database management.
-- **Express** for handling server-side logic.
-- **Nodemon** for automatic server restarts during development.
-- **Nodemailer** for sending password reset emails.
+### 🔑 Authentication
+Secure login system using email and password with full validation.
+- Google OAuth login
+Easily sign in with your Google account using OAuth2.
+- JWT-based authentication with protected routes
+Ensures only authorized users can access specific parts of the system.
+- Role-based access (admin / user)
+Different dashboards and permissions depending on the user's role.
+- Demo accounts for testing
+Try the system without signing up using built-in admin and user.
 
-### Security & Connection Management:
-- **JWT (JSON Web Tokens)** for user authentication.
-- **DotENV** for managing sensitive environment variables.
-- **CORS** for handling cross-origin requests.
-- **Bcrypt** for encrypting passwords.
+### ⛔ Password Reset
+Quick and secure recovery process through email verification codes.
+- Valid for 5 minutes
+- Secure password change with validation
 
-## Code Organization
+### 📊 Dashboard
+Track key performance indicators and gain insights in real-time. The layout and data dynamically adapt to the user's role.
+#### Regular User:
+- **Clients Added This Week** – Number of new clients the user added this week
+- **Clients Closed This Week** – Number of deals the user successfully closed
+- **Weekly Revenue** – Revenue from deals closed this week by the user
+- **Pending Clients** – Clients currently awaiting follow-up or status update
+- **Percentage change vs. previous week** – Weekly performance comparison
 
-The project is structured as follows:
+#### Admin:
+- **Clients Added This Month** – Track the total new clients added by all users
+- **Clients Closed This Month** – Number of deals closed across the system
+- **Monthly Revenue** – Total revenue generated this month
+- **Current Quarter Revenue** – Cumulative revenue for the current quarter
+- **Average Monthly Deal** – Average deal value for the month
+- **Recent Clients** – Latest clients added to the system (all users)
+- **Percentage change vs. previous month/quarter** – Compare business growth over time
+
+### 👥 User Management (Admin Only)
+Admins can fully manage users: view, edit, delete, or change permissions.
+- View all users
+- Search, sort, edit, delete users
+- View specific user profile
+- Default admin is created automatically on startup
+
+### 📅 Client Management
+Robust client tracking with filtering, editing, and deal statistics.
+- Add, edit, delete clients
+- Admin sees all clients; users see only their own
+- Fields: name, email, phone, type, note, status, deal value
+- Filter by status, type, and creation date
+
+### ✨ Additional Features
+Quality-of-life improvements for better usability and user experience.
+- Responsive design
+- Dark mode based on system preference
+- Protected routes for both UI and API
+- Toast notifications with Notyf
+- Demo data creation on first run (admin, user, sample clients)
+
+---
+
+## 🖼️ Screenshots
+
+> Below are real screenshots from the system in action.
+
+### User Dashboard (Dark Mode)
+![User Dashboard](./frontend/public/screenshots/user-dashboard-dark.png)
+
+### Admin Dashboard (Light Mode)
+![Admin Dashboard](./frontend/public/screenshots/admin-dashboard-light.png)
+
+### Clients Management
+![Clients Management](./frontend/public/screenshots/clients-management.png)
+
+### Login Page (Dark Mode)
+![Login Dark](./frontend/public/screenshots/login-dark.png)
+
+---
+
+## 🧪 Demo Mode
+Click "Demo Button (Admin)" or "Demo Button (User)" on the login page to explore the system without signing up.
+
+---
+
+## 📂 Technologies
+
+### Frontend
+- React + Vite
+- TailwindCSS
+- Axios
+- React Router DOM
+- Notyf
+- React Icons
+- react-oauth/google
+- Date-fns
+
+### Backend
+- Node.js + Express
+- MongoDB + Mongoose
+- JWT
+- Bcrypt
+- Joi
+- DotENV
+- Nodemailer
+- Axios (Google API)
+- CORS
+- Nodemon
+
+---
+
+## 📁 Project Structure
 
 ```
 Root Directory
 │
+├── package.json
+├── .gitignore
 ├── frontend
 │   ├── vite.config.js
-│   ├── package-lock.json
 │   ├── package.json
 │   ├── index.html
 │   ├── eslint.config.js
 │   ├── .gitignore
 │   ├── .env
-│   ├── node_modules/  ← Folder
-│   └── src/  ← Folder
+│   ├── public/
+│   │   └── google-icon.svg
+│   └── src/
 │       ├── main.jsx
-│       ├── App.jsx
-│       ├── App.css
-│       ├── pages/  ← Folder
-│       │   ├── Register.jsx
+│       ├── index.css
+│       ├── App.jsx 
+│       ├── utils/
+│       │   ├── AdminRoute.jsx
+│       │   ├── AuthContext.jsx
+│       │   ├── DarkMode.js
+│       │   └── ProtectedRoute.jsx
+│       ├── pages/
+│       │   ├── Clients.jsx
+│       │   ├── EditClient.jsx
+│       │   ├── EditUser.jsx
+│       │   ├── Home.jsx
+│       │   ├── Login.jsx
 │       │   ├── NotFound.jsx
-│       │   ├── Main.jsx
-│       │   └── Login.jsx
-│       ├── components/  ← Folder
-│       │   ├── AdminPanel.jsx
+│       │   ├── PasswordReset.jsx
+│       │   ├── Profile.jsx
+│       │   ├── Register.jsx
+│       │   └── Users.jsx
+│       ├── components/
+│       │   ├── CreateClient.jsx
+│       │   ├── ForgotPassword.jsx
+│       │   ├── Loading.jsx
+│       │   ├── ResetPassword.jsx
 │       │   ├── SideBar.jsx
-│       │   └── EditUser.jsx
-│       └── assets/  ← Folder
+│       │   └── VerifyOtp.jsx
+│       └── assets/
 │           └── test.png
 │
 └── backend
-    ├── package-lock.json
     ├── package.json
     ├── .gitignore
     ├── .env
-    ├── node_modules/  ← Folder
-    └── src/  ← Folder
+    └── src/
         ├── index.js
-        ├── utils/  ← Folder
-        │   ├── passwordUtils.js
-        │   └── defaultAdminUser.js
-        ├── routes/  ← Folder
+        ├── utils/
+        │   ├── DemoData.js
+        │   ├── passwordUtils.js 
+        │   └── sendOtpEmail.js
+        ├── routes/
         │   ├── userRoutes.js
-        │   ├── authRoutes.js
+        │   ├── clientRoutes.js
+        │   ├── authRoutes.js 
         │   └── adminRoutes.js
-        ├── models/  ← Folder
-        │   └── userModel.js
-        ├── middleware/  ← Folder
+        ├── models/
+        │   ├── userModel.js
+        │   └── clientModel.js
+        ├── middleware/
         │   └── authMiddleware.js
-        ├── controllers/  ← Folder
+        ├── controllers/
         │   ├── userController.js
-        │   ├── authController.js
+        │   ├── clientController.js
+        │   ├── authController.js 
         │   └── adminController.js
-        └── config/  ← Folder
+        └── config/
             └── dbConfig.js
 ```
 
-## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/AdminUserManager.git
-   ```
+---
 
-2. Navigate to the project folder:
-   ```bash
-   cd <project folder name>
-   ```
+## 🚀 Installation & Setup
 
-3. Install dependencies from the root project folder (the one containing both frontend/ and backend/):
-     ```bash
-     npm install
-     ```
-This will install dependencies for both the frontend and backend using npm-run-all, without needing to run npm install separately in each subfolder.
-     
-4. Set up your environment variables:
-   - Each part of the project (both frontend/ and backend/) requires its own separate .env file.
-   - Copy the provided .env.example in each of them to a new file named .env.
-   - Fill in your own values:
+### 1. Clone the repository
+```bash
+git clone https://github.com/barak7821/crm-dashboard.git
+```
 
-   Backend .env
-   ```bash
-   PORT=your_port
-   MongoDB_URL=your_mongodb_connection_url
-   JWT_SECRET=your_jwt_secret_key
-   APP_NAME=Your_App_Name
-   EMAIL_USER=your_email@example.com
-   EMAIL_PASS=your_email_app_password
-   ```
-   Frontend .env
-   ```bash
-   VITE_PORT=your_backend_port
-   VITE_GOOGLE_CLIENT_ID=your_google_client_id
-   ``` 
-   
-   Make sure to replace the values with your own configuration.
+### 2. Navigate into the project folder
+```bash
+cd crm-dashboard
+```
 
-5. Run the project from the root directory:
-     ```bash
-     npm run dev
-     ```
-     
-This will start both the backend and frontend servers concurrently using npm-run-all and concurrently. Make sure to run this command from the main project folder, not from the frontend or backend subfolders. The frontend output will be shown in blue, and the backend in green.
+### 3. Install dependencies (from root folder)
+```bash
+npm install
+```
+This installs both frontend and backend via npm-run-all.
+
+### 4. Create environment files
+
+#### Backend `.env`
+```env
+PORT=your_port
+MongoDB_URL=your_mongodb_connection_url
+JWT_SECRET=your_jwt_secret_key
+APP_NAME=CRM Dashboard
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_email_app_password
+```
+
+#### Frontend `.env`
+```env
+VITE_BACKEND_URL=your_backend_url
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+```
+
+### 5. Run the application
+```bash
+npm run dev
+```
+This will start both the backend and frontend servers concurrently using **npm-run-all** and **concurrently**. 
+Make sure to run this command from the **main project folder**, not from the `frontend/` or `backend/` subfolders. 
+The frontend output will be shown in blue, and the backend in green.

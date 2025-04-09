@@ -1,47 +1,54 @@
 import mongoose from "mongoose"
+import Joi from "joi"
+
+export const localSchema = Joi.object({
+    name: Joi.string().min(2).max(10).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).max(20).required(),
+    role: Joi.string().default("user"),
+    provider: Joi.string().valid("local").default("local"),
+    lastLogin: Joi.date()
+})
+
+export const googleSchema = Joi.object({
+    name: Joi.string().min(2).max(10).required(),
+    email: Joi.string().email().min(5).max(30).required(),
+    role: Joi.string().default("user"),
+    provider: Joi.string().valid("google"),
+    lastLogin: Joi.date()
+})
 
 // Define the schema for the User model
 const userSchema = new mongoose.Schema(
     {
-        // userName: unique and required
-        userName: {
-            type: String,
-            unique: true
-        },
-        // name: required
-        name: {
-            type: String,
-            required: true,
-        },
-        // email: unique and required
+        name: String,
         email: {
             type: String,
-            required: true,
-            unique: true
+            unique: true,
+            lowercase: true,
+            trim: true
         },
-        // password field: required and has a minimum length
+        // password: optional for Google login
         password: {
             type: String,
-            minlength: 8
+            select: false
         },
         // role field: optional, used to assign roles like "admin" or "user"
         role: {
-            type: String
+            type: String, default: "user"
         },
+
         // Account provider (defaults to "local", can be "google", etc.)
         provider: {
             type: String, default: "local"
         },
-        otpCode: {
-            type: String
-        },
-        otpExpiresAt: {
-            type: Date
-        }
+        lastLogin: Date,
+        otpCode: String,
+        otpExpiresAt: Date
     },
     { timestamps: true }  // Automatically adds 'createdAt' and 'updatedAt' fields
 )
 
-const User = mongoose.model("User", userSchema)
+export const User = mongoose.model("User", userSchema)
 
 export default User

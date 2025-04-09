@@ -4,8 +4,9 @@ import dotenv from "dotenv"
 import authRoutes from "./routes/authRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
+import clientRoutes from "./routes/clientRoutes.js"
 import setConnectionDB from "./config/dbConfig.js"
-import defaultAdminUser from './utils/defaultAdminUser.js'
+import { createDemoClients, demoAdmin, demoUser } from "./utils/DemoData.js"
 
 dotenv.config()
 
@@ -19,15 +20,18 @@ app.use(cors({
 app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/admin", adminRoutes)
+app.use("/api/client", clientRoutes)
 
-const PORT = process.env.PORT // Get the port number from environment variables
+const PORT = process.env.PORT || 3000 // Get the port number from environment variables
 
 try {
     await setConnectionDB()
     app.listen(PORT, async () => {
         console.log(`listening on ${PORT}...`)
     })
-    defaultAdminUser() // Call function to create a default admin user
+    await demoAdmin() // Call function to create a demo admin
+    await demoUser() // Call function to create a demo user
+    await createDemoClients() // Call function to create demo clients
 } catch (error) {
     console.error("Failed to connect to the database", error)
 }
