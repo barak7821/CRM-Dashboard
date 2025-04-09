@@ -1,4 +1,4 @@
-import User from "../models/userModel.js"
+import User, { localSchema, googleSchema } from "../models/userModel.js"
 import { hashPassword, checkPassword } from "../utils/passwordUtils.js"
 import jwt from "jsonwebtoken"
 import axios from "axios"
@@ -12,7 +12,7 @@ export const login = async (req, res) => {
         if (!email || !password) return res.status(400).json({ error: "Email and password are required." })
 
         // Check if the email is already registered
-        const userData = await User.findOne({ email: email.toLowerCase() })
+        const userData = await User.findOne({ email: email.toLowerCase() }).select("+password")
         if (!userData) return res.status(401).json({ message: "Invalid email or password. Please try again." })
 
         // Check if the password is correct
@@ -26,34 +26,31 @@ export const login = async (req, res) => {
 
         // Create a JWT token for the user
         const token = jwt.sign({ id: userData._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
+        await User.findByIdAndUpdate(userData._id, { lastLogin: new Date() })
 
         console.log("Login successful.")
         res.status(200).json({ message: "Login successful.", token, exist: true })
     } catch (error) {
         console.error("Error in login controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        res.status(500).json({ message: error.message || "Internal Server Error" })
     }
 }
 
 // Controller for user registration
 export const register = async (req, res) => {
-    const { userName, name, email, password } = req.body
+    const { name, email, password } = req.body
+    const provider = "local"
     try {
-        // Check if all fields are provided
-        if (!userName || !name || !email || !password) return res.status(400).json({ message: "All fields are required" })
-
-        // Check if the password length is valid
-        if (password.length < 8 || password.length > 20) return res.status(400).json({ message: "Password should be between 8 and 20 characters" })
+        await localSchema.validateAsync({ name, email, password, provider })
 
         // Check if the email is already registered
-        const userData = await User.findOne({ email: email.toLowerCase() })
-        if (userData) return res.status(409).json({ message: "Email already exists" })
+        const existingUser = await User.findOne({ email: email.toLowerCase() })
+        if (existingUser) return res.status(409).json({ message: "Email already exists" })
 
         // Hash the password before saving the user
         const hashedPassword = await hashPassword(password)
 
         const newUser = new User({
-            userName,
             name,
             email: email.toLowerCase(),
             password: hashedPassword,
@@ -65,11 +62,11 @@ export const register = async (req, res) => {
         // Create a JWT token for the user
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
 
-        console.log(`${userName} added successfully`)
-        res.status(201).json({ message: `${userName} added successfully`, token, exist: true })
+        console.log(`${name} added successfully`)
+        res.status(201).json({ message: `${name} added successfully`, token, exist: true })
     } catch (error) {
         console.error("Error in register controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        res.status(500).json({ message: error.message || "Internal Server Error" })
     }
 }
 
@@ -91,18 +88,22 @@ export const googleLogin = async (req, res) => {
             headers: { Authorization: `Bearer ${token}` }
         })
 
-        const { email, name } = data
+        const { email, name, provider } = data
 
-        let user = await User.findOne({ email })
+        await googleSchema.validateAsync({ name, email, provider })
+
+        let user = await User.findOne({ email: email.toLowerCase() })
 
         if (!user) {
             user = await User.create({
-                userName: email,
-                email,
+                email: email.toLowerCase(),
                 name,
-                provider: "google"
+                provider: "google",
+                lastLogin: new Date()
             })
         }
+
+        await User.findByIdAndUpdate(user._id, { lastLogin: new Date() })
 
         // Create a JWT token for the user
         const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
@@ -126,7 +127,7 @@ export const requestReset = async (req, res) => {
 
     try {
         // Find the user by email
-        const user = await User.findOne({ email: email.toLowerCase() })
+        const user = await User.findOne({ email: email.toLowerCase() }).select("+password")
 
         // If user doesn't exist, return error
         if (!user) return res.status(404).json({ message: "User not found" })
@@ -192,6 +193,11 @@ export const resetPassword = async (req, res) => {
     try {
         // Find the user by email
         const user = await User.findOne({ email: email.toLowerCase() })
+
+        // If the user registered via Google (OAuth), they don't have a password set – cannot reset password
+        if (!user.password) {
+            return res.status(400).json({ message: "Cannot reset password for accounts registered with Google" })
+        }
 
         // Check if user exists and has a valid OTP and expiration
         if (!user || !user.otpCode || !user.otpExpiresAt) return res.status(400).json({ message: "Invalid or expired code" })
