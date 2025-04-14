@@ -115,7 +115,7 @@ export default function Profile() {
 
       // Remove token from local storage
       localStorage.removeItem("token")
-      nav("/")
+      nav("/login")
     } catch (error) {
       console.error("Failed to delete user data", error)
       if (error.response.status === 404) return notyf.error("User not found. Please try again.")

@@ -11,11 +11,13 @@ import EditClient from './pages/EditClient.jsx'
 import Home from './pages/Home.jsx'
 import Users from './pages/Users.jsx'
 import AdminRoute from './utils/AdminRoute.jsx'
+import WakeUp from './pages/WakeUp.jsx'
 
 function App() {
   return (
     <Routes>
-      <Route index element={< Login />} />
+      <Route index element={<WakeUp />} />
+      <Route path="/login" element={< Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/reset" element={< PasswordReset />} />
       <Route path="*" element={<NotFound />} />

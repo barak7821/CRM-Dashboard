@@ -13,7 +13,7 @@ dotenv.config()
 const app = Express()
 app.use(Express.json())
 app.use(cors({
-    origin: "*"
+    origin: "https://crm-dashboard-nu.vercel.app"
 }))
 
 // Define route handlers for authentication, user, and admin-related routes
@@ -21,6 +21,9 @@ app.use("/api/auth", authRoutes)
 app.use("/api/user", userRoutes)
 app.use("/api/admin", adminRoutes)
 app.use("/api/client", clientRoutes)
+
+// Define a simple ping endpoint to check if the server is running
+app.get("/api/ping", (req, res) => res.send("Running"))
 
 const PORT = process.env.PORT || 3000 // Get the port number from environment variables
 

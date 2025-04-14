@@ -4,7 +4,8 @@ A modern and responsive CRM (Customer Relationship Management) web application b
 
 > ✅ Includes demo admin and regular user accounts – no signup required!
 
-🚀 **Live Demo:**  
+🚀 **Live Demo:**
+This app is hosted on Render (free tier). The backend may take up to 30 seconds to wake up after inactivity, during which a loading screen will be shown.
 👉 [https://crm-dashboard-nu.vercel.app](https://crm-dashboard-nu.vercel.app)
 
 ---
