@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Loading from '../components/Loading'
 import axios from "axios"
-import { Notyf } from 'notyf';
-import 'notyf/notyf.min.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 import { startOfWeek, endOfWeek, subWeeks, startOfMonth, endOfMonth, subMonths, startOfQuarter, endOfQuarter, subQuarters, isWithinInterval } from 'date-fns';
@@ -11,7 +9,6 @@ import { initTheme } from "../utils/DarkMode"
 
 export default function Home() {
   const nav = useNavigate()
-  const notyf = new Notyf({ position: { x: 'center', y: 'top' } })
   const [clientsList, setClientsList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const { isAdmin } = useAuth()
@@ -42,7 +39,7 @@ export default function Home() {
       setClientsList(data)
     } catch (error) {
       console.error("Failed to fetch clients list", error)
-      if (error.response.status === 401 || error.response.status === 403) return nav("/")
+      if (error.response.status === 401 || error.response.status === 403) return nav("/login")
     } finally {
       // Set loading state to false after fetching data
       setIsLoading(false)

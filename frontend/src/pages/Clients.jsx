@@ -49,7 +49,7 @@ export default function Clients() {
             setClientsList(data)
         } catch (error) {
             console.error("Failed to fetch clients list", error)
-            if (error.response.status === 401 || error.response.status === 403) return nav("/")
+            if (error.response.status === 401 || error.response.status === 403) return nav("/login")
         } finally {
             // Set loading state to false after fetching data
             setIsLoading(false)

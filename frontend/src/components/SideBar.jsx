@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { IoIosMenu, IoIosClose } from "react-icons/io";
 import { useAuth } from '../utils/AuthContext'
 import { setTheme, initTheme } from "../utils/DarkMode"
